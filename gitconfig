@@ -1,0 +1,13 @@
+[color]
+	ui = true
+	status = auto
+	branch = auto
+	interactive = auto
+	diff = auto
+[core]
+	editor = vim
+[merge]
+	tool = vimdiff
+[user]
+	name = sokolowskik
+	email = kamil.j.sokolowski@gmail.com
