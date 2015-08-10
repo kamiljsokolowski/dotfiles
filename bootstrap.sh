@@ -13,3 +13,9 @@ if [ "$dir" = "" ]; then
 	dir=$basedir
 fi
 
+# Git
+ln -s ${basedir}/gitconfig ~/.gitconfig
+
+# Vim
+ln -s ${basedir}/vimrc ~/.vimrc
+
