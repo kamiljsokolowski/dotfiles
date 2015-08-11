@@ -1,15 +1,27 @@
 Dotfiles
 ========
 
+The life-time project that is my configuration files set.
+
 Deployment
 ----------
 
 Clone this repository:
-"\ngit clone -bare https://github.com/sokolowskik/dotfiles.git"
 
-Make bootstrap.sh script executable
-"\nchmod +x bootstrap.sh"
+```Shell
+git clone -bare https://github.com/sokolowskik/dotfiles.git
+```
 
-And run it (repo location is optional)
-"\n./bootstrap.sh <repo_dir>"
-"\n./bootstrap.sh"
+Make bootstrap.sh script executable:
+
+```Shell
+chmod +x bootstrap.sh
+```
+
+and run it (repo location is optional):
+
+```Shell
+./bootstrap.sh <repo_dir>
+./bootstrap.sh
+```
+
