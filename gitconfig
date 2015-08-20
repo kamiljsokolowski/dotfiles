@@ -9,5 +9,15 @@
 [merge]
 	tool = vimdiff
 [user]
-	name = sokolowskik
+	name = Kamil Sokolowski
 	email = kamil.j.sokolowski@gmail.com
+[alias]
+        co = checkout
+        br = branch
+        ci = commit
+        st = status
+        df = diff
+        list = ls-tree --full-tree -r HEAD
+        unstage = reset HEAD --
+        last = log -1 HEAD
+        amend = commit --amend -C HEAD
