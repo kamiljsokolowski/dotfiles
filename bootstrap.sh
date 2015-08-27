@@ -14,8 +14,12 @@ if [ "$dir" = "" ]; then
 fi
 
 # Git
+if [ -f ~/.gitconfig ]; then rm -rf ~/.gitconfig
+fi
 ln -s ${basedir}/gitconfig ~/.gitconfig
 
 # Vim
+if [ -f ~/.vimrc ]; then rm -rf ~/.vimrc
+fi
 ln -s ${basedir}/vimrc ~/.vimrc
 
