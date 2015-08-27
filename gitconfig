@@ -8,9 +8,6 @@
 	editor = vim
 [merge]
 	tool = vimdiff
-[user]
-	name = Kamil Sokolowski
-	email = kamil.j.sokolowski@gmail.com
 [alias]
         co = checkout
         br = branch
