@@ -22,6 +22,7 @@ ln -s ${basedir}/gitconfig ~/.gitconfig
 if [ -f ~/.tmux.conf ]; then rm -rf ~/.tmux.conf
 fi
 ln -s ${basedir}/tmux.conf ~/.tmux.conf
+mkdir -p ~/.tmux/plugins
 
 # Vim
 if [ -f ~/.vimrc ]; then rm -rf ~/.vimrc
