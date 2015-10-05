@@ -18,6 +18,11 @@ if [ -f ~/.gitconfig ]; then rm -rf ~/.gitconfig
 fi
 ln -s ${basedir}/gitconfig ~/.gitconfig
 
+# tmux
+if [ -f ~/.tmux.conf ]; then rm -rf ~/.tmux.conf
+fi
+ln -s ${basedir}/tmux.conf ~/.tmux.conf
+
 # Vim
 if [ -f ~/.vimrc ]; then rm -rf ~/.vimrc
 fi
