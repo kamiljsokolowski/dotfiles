@@ -25,3 +25,8 @@ and run it (repo location is optional):
 ./bootstrap.sh
 ```
 
+Installing TMUX plugins
+-----------------------
+
+Simply hit `prefix + I` when inside an active tmux session and all the plugins will be installed in to `~/.tmux/plugins`.
+
