@@ -23,6 +23,7 @@ if [ -f ~/.tmux.conf ]; then rm -rf ~/.tmux.conf
 fi
 ln -s ${basedir}/tmux.conf ~/.tmux.conf
 mkdir -p ~/.tmux/plugins
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Vim
 if [ -f ~/.vimrc ]; then rm -rf ~/.vimrc
