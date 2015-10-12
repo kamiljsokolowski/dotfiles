@@ -87,3 +87,7 @@ set nobackup
 "set nobackupfiles
 "set noswapfiles
 
+
+" Pathogen first
+execute pathogen#infect()
+
