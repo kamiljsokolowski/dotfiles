@@ -29,4 +29,9 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 if [ -f ~/.vimrc ]; then rm -rf ~/.vimrc
 fi
 ln -s ${basedir}/vimrc ~/.vimrc
+# Powerline (requires pip)
+pip install --user powerline-status
+# Powerline fonts
+git clone https://github.com/powerline/fonts.git ~/powerline-fonts
+~/powerline-fonts/install.sh
 

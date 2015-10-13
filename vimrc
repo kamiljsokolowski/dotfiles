@@ -88,6 +88,10 @@ set nobackup
 "set noswapfiles
 
 
-" Pathogen first
+" Pathogen comes first
 execute pathogen#infect()
+" Powerline (~/.local/bin must be added to $PATH)
+python from powerline.vim import setup as powerline_setup
+python powerline_setup()
+python del powerline_setup
 
