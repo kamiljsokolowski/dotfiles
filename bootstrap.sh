@@ -30,6 +30,7 @@ if [ -f ~/.vimrc ]; then rm -rf ~/.vimrc
 fi
 ln -s ${basedir}/vimrc ~/.vimrc
 # Powerline (requires pip)
+command -v pip >/dev/null 2>&1 || { echo >&2 "Did not found pip.. no powerlining for You today mate!"; exit 1; }
 pip install --user powerline-status
 # Powerline fonts
 git clone https://github.com/powerline/fonts.git ~/powerline-fonts
