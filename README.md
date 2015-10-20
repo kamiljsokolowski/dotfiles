@@ -9,7 +9,7 @@ Deployment
 Clone this repository:
 
 ```Shell
-git clone -bare https://github.com/sokolowskik/dotfiles.git
+git clone --recursive https://github.com/sokolowskik/dotfiles.git
 ```
 
 Make bootstrap.sh script executable:
