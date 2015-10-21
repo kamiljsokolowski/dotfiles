@@ -94,4 +94,8 @@ execute pathogen#infect()
 python from powerline.vim import setup as powerline_setup
 python powerline_setup()
 python del powerline_setup
+" CtrlP (modify/update)
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'ra'
 
