@@ -22,7 +22,9 @@ ln -s ${basedir}/gitconfig ~/.gitconfig
 if [ -f ~/.tmux.conf ]; then rm -rf ~/.tmux.conf
 fi
 ln -s ${basedir}/tmux.conf ~/.tmux.conf
-mkdir -p ~/.tmux/plugins
+if [ -d ~/.tmux ]; then rm -rf ~/.tmux
+fi
+ln -s ${basedir}/tmux ~/.tmux
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Vim
