@@ -13,6 +13,11 @@ if [ "$dir" = "" ]; then
 	dir=$basedir
 fi
 
+# update Git submodulels (submodules could be updated during git clone)
+cd ${basedir}
+git submodule init && git submodule update
+cd -
+
 # Git
 if [ -f ~/.gitconfig ]; then rm -rf ~/.gitconfig
 fi
