@@ -30,7 +30,6 @@ ln -s ${basedir}/tmux.conf ~/.tmux.conf
 if [ -d ~/.tmux ]; then rm -rf ~/.tmux
 fi
 ln -s ${basedir}/tmux ~/.tmux
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Vim
 if [ -f ~/.vimrc ]; then rm -rf ~/.vimrc
