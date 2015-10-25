@@ -12,7 +12,7 @@ Clone this repository:
 git clone --recursive https://github.com/sokolowskik/dotfiles.git
 ```
 
-Make bootstrap.sh script executable:
+`bootstrap.sh` script should already be executable. Otherwise simply execute:
 
 ```Shell
 chmod +x bootstrap.sh
@@ -28,7 +28,7 @@ and run it (repo location is optional):
 Installing TMUX plugins
 -----------------------
 
-Simply hit `prefix + I` when inside an active tmux session and all the plugins will be installed in to `~/.tmux/plugins`.
+Hit `prefix + I` when inside an active tmux session and all the plugins will be installed in to `~/.tmux/plugins`.
 
 
 Vim Powerline plugin setup
