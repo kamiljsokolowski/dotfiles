@@ -87,6 +87,10 @@ set nobackup
 "set nobackupfiles
 "set noswapfiles
 
+" Unix-style line endings
+set fileformat=unix
+set fileformats=unix,dos
+
 
 " Pathogen comes first
 execute pathogen#infect()
