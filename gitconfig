@@ -6,6 +6,7 @@
 	diff = auto
 [core]
 	editor = vim
+        autocrlf = false
 [merge]
 	tool = vimdiff
 [alias]
