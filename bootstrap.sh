@@ -18,10 +18,10 @@ cd ${dir}
 git submodule init && git submodule update
 cd -
 
-# Git
-if [ -f ${HOME}/.gitconfig ]; then rm -rf ${HOME}/.gitconfig
+# zsh
+if [ -f ${HOME}/.zshrc ]; then rm -rf ${HOME}/.zshrc
 fi
-ln -s ${dir}/gitconfig ${HOME}/.gitconfig
+ln -s ${dir}/zshrc ${HOME}/.zshrc
 
 # tmux
 if [ -f ${HOME}/.tmux.conf ]; then rm -rf ${HOME}/.tmux.conf
@@ -30,6 +30,11 @@ ln -s ${dir}/tmux.conf ${HOME}/.tmux.conf
 if [ -d ${HOME}/.tmux ]; then rm -rf ${HOME}/.tmux
 fi
 ln -s ${dir}/tmux ${HOME}/.tmux
+
+# Git
+if [ -f ${HOME}/.gitconfig ]; then rm -rf ${HOME}/.gitconfig
+fi
+ln -s ${dir}/gitconfig ${HOME}/.gitconfig
 
 # Vim
 if [ -f ${HOME}/.vimrc ]; then rm -rf ${HOME}/.vimrc
