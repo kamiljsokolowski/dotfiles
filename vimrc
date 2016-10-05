@@ -46,7 +46,9 @@ set autoindent
 "set ruler
 
 " Always display the status line.
+set rtp+=$HOME/.local/lib/python2.7/site-packages/powerline/bindings/vim/
 set laststatus=2
+set t_Co=256
 
 " When something goes wrong ring a visual bell
 "set visualbell
