@@ -1,23 +1,23 @@
 [color]
-	ui = true
-	status = auto
-	branch = auto
-	interactive = auto
-	diff = auto
+    ui = true
+    status = auto
+    branch = auto
+    interactive = auto
+    diff = auto
 [core]
-	editor = vim
-        autocrlf = false
+    editor = vim
+    autocrlf = false
 [merge]
-	tool = vimdiff
+    tool = vimdiff
 [alias]
-        co = checkout
-        br = branch
-        ci = commit
-        st = status
-        df = diff
-        list = ls-tree --full-tree -r HEAD
-        unstage = reset HEAD --
-        last = log -1 HEAD
-        amend = commit --amend -C HEAD
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    df = diff
+    list = ls-tree --full-tree -r HEAD
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    amend = commit --amend -C HEAD
 [push]
     default = simple
