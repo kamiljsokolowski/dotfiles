@@ -53,6 +53,7 @@ ZSH_THEME="agnoster"
 plugins=(git)
 
 # User configuration
+export DEFAULT_USER=`whoami`
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 path+=("${HOME}/.local/bin")
