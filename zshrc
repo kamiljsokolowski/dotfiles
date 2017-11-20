@@ -58,8 +58,11 @@ export DEFAULT_USER=`whoami`
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 path+=("${HOME}/.local/bin")
 # export MANPATH="/usr/local/man:$MANPATH"
+fpath=(~/.zsh/completion $fpath)
 
 source $ZSH/oh-my-zsh.sh
+autoload -Uz compinit \
+    && compinit -i
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
