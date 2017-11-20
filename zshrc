@@ -61,6 +61,8 @@ path+=("${HOME}/.local/bin")
 fpath=(~/.zsh/completion $fpath)
 
 source $ZSH/oh-my-zsh.sh
+autoload -Uz compinit \
+    && compinit -i
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
