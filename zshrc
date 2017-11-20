@@ -58,6 +58,7 @@ export DEFAULT_USER=`whoami`
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 path+=("${HOME}/.local/bin")
 # export MANPATH="/usr/local/man:$MANPATH"
+fpath=(~/.zsh/completion $fpath)
 
 source $ZSH/oh-my-zsh.sh
 
