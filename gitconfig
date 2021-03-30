@@ -7,6 +7,7 @@
 [core]
     editor = vim
     autocrlf = false
+    pager = diff-so-fancy | less --tabs=4 -RFX
 [merge]
     tool = vimdiff
 [alias]
@@ -21,3 +22,5 @@
     amend = commit --amend -C HEAD
 [push]
     default = simple
+[interactive]
+    diffFilter = diff-so-fancy --patch
