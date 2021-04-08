@@ -57,6 +57,7 @@ export DEFAULT_USER=`whoami`
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 path+=("${HOME}/.local/bin")
+path+=('/usr/local/lib/node_modules')
 # export MANPATH="/usr/local/man:$MANPATH"
 fpath=(~/.zsh/completion $fpath)
 
@@ -79,6 +80,8 @@ autoload -Uz compinit \
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
