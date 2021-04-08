@@ -95,3 +95,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 # GPG config
 GPG_TTY=$(tty)
 export GPG_TTY
+
+# fix "Insecure completion-dependent directories detected" 
+ZSH_DISABLE_COMPFIX=true

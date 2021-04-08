@@ -3,6 +3,15 @@ Dotfiles
 
 The life-time project that is my configuration files set.
 
+Pre-reqs
+--------
+
+Diff-so-fancy
+- MacOS
+```Shell
+brew install diff-so-fancy
+```
+
 Deployment
 ----------
 
