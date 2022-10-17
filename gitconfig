@@ -19,7 +19,7 @@
     whitespace = red reverse
 [core]
     editor = vim
-    autocrlf = false
+    autocrlf = input
     pager = diff-so-fancy | less --tabs=4 -RFX
 [merge]
     tool = vimdiff
