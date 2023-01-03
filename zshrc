@@ -58,6 +58,7 @@ export DEFAULT_USER=`whoami`
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 path+=("${HOME}/.local/bin")
 path+=('/usr/local/lib/node_modules')
+path+=('/opt/homebrew/bin')
 # export MANPATH="/usr/local/man:$MANPATH"
 fpath=(~/.zsh/completion $fpath)
 
@@ -98,3 +99,5 @@ export GPG_TTY
 
 # fix "Insecure completion-dependent directories detected" 
 ZSH_DISABLE_COMPFIX=true
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
