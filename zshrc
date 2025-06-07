@@ -105,6 +105,7 @@ ZSH_DISABLE_COMPFIX=true
 source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Use GKE gcloud auth plugin
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
