@@ -59,6 +59,8 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 path+=("${HOME}/.local/bin")
 path+=('/usr/local/lib/node_modules')
 path+=('/opt/homebrew/bin')
+path+=('/opt/homebrew/sbin')
+path+=('/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin')
 # export MANPATH="/usr/local/man:$MANPATH"
 fpath=(~/.zsh/completion $fpath)
 
@@ -99,5 +101,11 @@ export GPG_TTY
 
 # fix "Insecure completion-dependent directories detected" 
 ZSH_DISABLE_COMPFIX=true
+
+source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+
+# Use GKE gcloud auth plugin
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
