@@ -2,15 +2,15 @@
 
 dir=$1
 #basedir="cd "$(dirname "${BASH_SOURCE[0]}")" && pwd"
-basedir=`pwd`
+basedir=$(pwd)
 
 if [ "${dir}" = "" ]; then
-	echo "Repo dir (hit ENTER to use '${basedir}')"
-	read dir
+  echo "Repo dir (hit ENTER to use '${basedir}')"
+  read dir
 fi
 
 if [ "${dir}" = "" ]; then
-	dir=${basedir}
+  dir=${basedir}
 fi
 
 # update Git submodulels (submodules could be updated during git clone)
@@ -19,34 +19,33 @@ git submodule init && git submodule update
 cd -
 
 # zsh
-if [ -f ${HOME}/.zshrc ]; then rm -rf ${HOME}/.zshrc
+if [ -f ${HOME}/.zshrc ]; then
+  rm -rf ${HOME}/.zshrc
 fi
 ln -s ${dir}/zshrc ${HOME}/.zshrc
 
 # tmux
-if [ -f ${HOME}/.tmux.conf ]; then rm -rf ${HOME}/.tmux.conf
+if [ -f ${HOME}/.tmux.conf ]; then
+  rm -rf ${HOME}/.tmux.conf
 fi
 ln -s ${dir}/tmux.conf ${HOME}/.tmux.conf
-if [ -d ${HOME}/.tmux ]; then rm -rf ${HOME}/.tmux
+if [ -d ${HOME}/.tmux ]; then
+  rm -rf ${HOME}/.tmux
 fi
 ln -s ${dir}/tmux ${HOME}/.tmux
 
 # Git
-if [ -f ${HOME}/.gitconfig ]; then rm -rf ${HOME}/.gitconfig
+if [ -f ${HOME}/.gitconfig ]; then
+  rm -rf ${HOME}/.gitconfig
 fi
 ln -s ${dir}/gitconfig ${HOME}/.gitconfig
 
 # Vim
-if [ -f ${HOME}/.vimrc ]; then rm -rf ${HOME}/.vimrc
+if [ -f ${HOME}/.vimrc ]; then
+  rm -rf ${HOME}/.vimrc
 fi
 ln -s ${dir}/vimrc ${HOME}/.vimrc
-if [ -d ${HOME}/.vim ]; then rm -rf ${HOME}/.vim
+if [ -d ${HOME}/.vim ]; then
+  rm -rf ${HOME}/.vim
 fi
 ln -s ${dir}/vim ${HOME}/.vim
-# Powerline (requires pip)
-command -v pip >/dev/null 2>&1 || { echo >&2 "Did not found pip.. no powerlining for You today mate!"; exit 1; }
-pip install --user powerline-status
-# Powerline fonts
-git clone https://github.com/powerline/fonts.git ${HOME}/Git/powerline-fonts
-${HOME}/Git/powerline-fonts/install.sh
-
