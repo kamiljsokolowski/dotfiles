@@ -1,0 +1,2 @@
+# K8S
+SPACESHIP_KUBECTL_SHOW="true"

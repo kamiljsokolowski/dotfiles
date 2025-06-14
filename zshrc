@@ -110,4 +110,6 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Use GKE gcloud auth plugin
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
+export SPACESHIP_CONFIG="$HOME/.config/spaceship/spaceship.zsh"
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

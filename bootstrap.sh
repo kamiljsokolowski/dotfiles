@@ -24,6 +24,12 @@ if [ -f ${HOME}/.zshrc ]; then
 fi
 ln -s ${dir}/zshrc ${HOME}/.zshrc
 
+# spaceship
+if [ -f ${HOME}/.config/spaceship ]; then
+  rm -rf ${HOME}/.config/spaceship
+fi
+ln -s ${dir}/spaceship/spaceship.zsh ${HOME}/.config/spaceship.zsh
+
 # tmux
 if [ -f ${HOME}/.tmux.conf ]; then
   rm -rf ${HOME}/.tmux.conf
