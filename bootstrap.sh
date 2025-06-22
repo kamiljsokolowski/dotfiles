@@ -13,6 +13,14 @@ if [ "${dir}" = "" ]; then
   dir=${basedir}
 fi
 
+# Homebrew Bundle
+if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ]; then
+  brew bundle check >/dev/null 2>&1  || {
+    echo "==> Installing Homebrew dependencies…"
+    brew bundle
+  }
+fi
+
 # update Git submodulels (submodules could be updated during git clone)
 cd ${dir}
 git submodule init && git submodule update
