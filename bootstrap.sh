@@ -15,7 +15,7 @@ fi
 
 # Homebrew Bundle
 if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ]; then
-  brew bundle check >/dev/null 2>&1  || {
+  brew bundle check >/dev/null 2>&1 || {
     echo "==> Installing Homebrew dependencies…"
     brew bundle
   }
@@ -30,7 +30,7 @@ cd -
 if [ -f ${HOME}/.zshrc ]; then
   rm -rf ${HOME}/.zshrc
 fi
-ln -s ${dir}/zshrc ${HOME}/.zshrc
+ln -s ${dir}/zsh/zshrc ${HOME}/.zshrc
 
 # spaceship
 if [ -f ${HOME}/.config/spaceship ]; then
@@ -42,7 +42,7 @@ ln -s ${dir}/spaceship/spaceship.zsh ${HOME}/.config/spaceship.zsh
 if [ -f ${HOME}/.tmux.conf ]; then
   rm -rf ${HOME}/.tmux.conf
 fi
-ln -s ${dir}/tmux.conf ${HOME}/.tmux.conf
+ln -s ${dir}/tmux/tmux.conf ${HOME}/.tmux.conf
 if [ -d ${HOME}/.tmux ]; then
   rm -rf ${HOME}/.tmux
 fi
@@ -52,13 +52,12 @@ ln -s ${dir}/tmux ${HOME}/.tmux
 if [ -f ${HOME}/.gitconfig ]; then
   rm -rf ${HOME}/.gitconfig
 fi
-ln -s ${dir}/gitconfig ${HOME}/.gitconfig
+ln -s ${dir}/git/gitconfig ${HOME}/.gitconfig
 
 # Vim
 if [ -f ${HOME}/.vimrc ]; then
   rm -rf ${HOME}/.vimrc
 fi
-ln -s ${dir}/vimrc ${HOME}/.vimrc
 if [ -d ${HOME}/.vim ]; then
   rm -rf ${HOME}/.vim
 fi
