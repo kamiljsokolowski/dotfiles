@@ -21,11 +21,6 @@ if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ]; then
   }
 fi
 
-# update Git submodulels (submodules could be updated during git clone)
-cd ${dir}
-git submodule init && git submodule update
-cd -
-
 # zsh
 if [ -f ${HOME}/.zshrc ]; then
   rm -rf ${HOME}/.zshrc
