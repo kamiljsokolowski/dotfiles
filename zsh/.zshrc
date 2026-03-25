@@ -113,3 +113,7 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 export SPACESHIP_CONFIG="$HOME/.config/spaceship/spaceship.zsh"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/kamil.sokolowski/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
