@@ -3,34 +3,27 @@ Dotfiles
 
 The life-time project that is my configuration files set.
 
-Pre-reqs
---------
-
-Diff-so-fancy
-- MacOS
-```Shell
-brew install diff-so-fancy
-```
-
 Deployment
 ----------
 
 Clone this repository:
 
 ```Shell
-git clone --recursive https://github.com/sokolowskik/dotfiles.git
+git clone https://github.com/sokolowskik/dotfiles.git ~/.dotfiles
 ```
 
-`bootstrap.sh` script should already be executable. Otherwise simply execute:
+cd in to the dotfiles dir
 
 ```Shell
-chmod +x bootstrap.sh
+cd ~/.dotfiles
 ```
 
 and run it (repo location is optional):
 
 ```Shell
-./bootstrap.sh <repo_dir>
-./bootstrap.sh
+# (for ZSH to check ~/.config/zsh dir for config) this needs to be executed outside of GNU Stow
+ln -s ~/.dotfiles/zsh/.zshenv ~/.zshenv
+
+stow -v .
 ```
 
