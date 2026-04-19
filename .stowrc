@@ -1,9 +1,11 @@
 --target=~/.config
 --ignore=.stowrc
+--ignore=.claude
 --ignore=bootstrap.sh
 --ignore=Brewfile
 --ignore=LICENSE.md
 --ignore=README.md
+--ignore=CLAUDE.md
 --ignore=^nvim/README.md
 --ignore=^tmux/README.md
 --ignore=^vim/*
