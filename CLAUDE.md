@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository.
 
 ## Deployment
 
@@ -12,6 +12,9 @@ ln -s ~/.dotfiles/zsh/.zshenv ~/.zshenv
 
 # Symlink all other configs to ~/.config/ via GNU Stow
 stow -v .
+
+# ~/.claude must point to the stow-managed location
+ln -s ~/.config/claude ~/.claude
 ```
 
 To re-apply after changes: `stow -v .` (from `~/.dotfiles`)
@@ -19,23 +22,32 @@ To remove symlinks: `stow -vD .`
 
 ## Architecture
 
-**GNU Stow + XDG Base Directory.** Each top-level directory is a Stow "package". Stow symlinks its contents into `~/.config/` (configured in `.stowrc`). The result: `~/.config/nvim/` → `~/.dotfiles/nvim/`, etc.
+**GNU Stow + XDG Base Directory.** Each top-level directory is a Stow
+"package". Stow symlinks its contents into `~/.config/` (configured in
+`.stowrc`). The result: `~/.config/nvim/` → `~/.dotfiles/nvim/`, etc.
 
 **Exceptions handled in `.stowrc`:**
+
 - `zsh/.zshenv` — manually symlinked to `~/.home` instead
 - `vim/*` — excluded entirely (legacy, kept for reference only)
 - Top-level non-config files (`Brewfile`, `README.md`, etc.) — ignored
 
+**Post-stow manual steps:**
+
+- `~/.claude` — symlinked to `~/.config/claude` (Claude Code expects
+  `~/.claude`; stow manages `~/.config/claude`)
+
 ## Tool Stack
 
 | Tool | Config dir | Notes |
-|------|-----------|-------|
-| Zsh | `zsh/` | Oh-My-Zsh + Spaceship prompt; `.zshenv` sets `ZDOTDIR` |
+| --- | --- | --- |
+| Zsh | `zsh/` | Oh-My-Zsh + Spaceship; `.zshenv` sets `ZDOTDIR` |
 | Neovim | `nvim/` | LazyVim-based; plugins via `lazy.nvim` |
-| Tmux | `tmux/` | Prefix `Ctrl+A`; plugins via TPM at `~/.tmux/plugins/tpm` |
+| Tmux | `tmux/` | Prefix `Ctrl+A`; TPM at `~/.tmux/plugins/tpm` |
 | Git | `git/` | Uses `diff-so-fancy` pager |
 | Ghostty | `ghostty/` | Primary terminal; Catppuccin Mocha theme |
 | Spaceship | `spaceship/` | Prompt theme config |
+| Claude | `claude/` | Config, agents, skills; runtime data gitignored |
 | Vim | `vim/` | Legacy fallback; excluded from Stow |
 
 ## Neovim (LazyVim)
@@ -47,7 +59,17 @@ To remove symlinks: `stow -vD .`
 
 ## Tmux
 
-TPM plugins are installed at `~/.tmux/plugins/` (outside this repo). After adding a plugin to `tmux/tmux.conf`, install with `prefix + I` inside a tmux session.
+TPM plugins are installed at `~/.tmux/plugins/` (outside this repo).
+After adding a plugin to `tmux/tmux.conf`, install with `prefix + I`
+inside a tmux session.
+
+## Claude
+
+- Config: `CLAUDE.md`, `RTK.md`, `settings.json`, `statusline-command.sh`
+- Custom agents: `agents/`
+- Locally-authored skills: `skills/` (company-sourced skills excluded)
+- Runtime data (`projects/`, `sessions/`, `history.jsonl`, etc.)
+  lives in `~/.config/claude/` but is gitignored
 
 ## Skills
 

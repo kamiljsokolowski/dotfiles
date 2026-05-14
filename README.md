@@ -21,9 +21,12 @@ cd ~/.dotfiles
 and run it (repo location is optional):
 
 ```Shell
-# (for ZSH to check ~/.config/zsh dir for config) this needs to be executed outside of GNU Stow
+# ZSH: must live in $HOME, not ~/.config — symlink manually
 ln -s ~/.dotfiles/zsh/.zshenv ~/.zshenv
 
+# Symlink all configs to ~/.config/ via GNU Stow
 stow -v .
-```
 
+# Claude Code expects ~/.claude — symlink to the stow-managed location
+ln -s ~/.config/claude ~/.claude
+```
