@@ -1,0 +1,27 @@
+# runtime dirs
+backups/
+cache/
+debug/
+file-history/
+ide/
+memory/
+paste-cache/
+plans/
+plugins/
+projects/
+session-env/
+sessions/
+shell-snapshots/
+telemetry/
+usage-data/
+
+# local settings (permissions, tokens)
+.claude/
+
+# runtime files
+history.jsonl
+mcp-needs-auth-cache.json
+policy-limits.json
+remote-settings.json
+settings.json.bak
+.DS_Store
