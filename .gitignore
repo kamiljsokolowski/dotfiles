@@ -2,3 +2,6 @@
 .vagrant
 tmux/plugins
 tmux/resurrect
+nvim/lazy-lock.json
+zsh/.zcompdump*
+zsh/.zsh_history
