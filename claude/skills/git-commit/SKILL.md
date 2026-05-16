@@ -6,26 +6,45 @@ allowed-tools: Bash(git status) Bash(git diff *) Bash(git log *) Bash(git add *)
 argument-hint: "[--yes]"
 ---
 
+# git-commit
+
 ## Step 1 — Collect all changes
 
 ```bash
 git status --short
 ```
 
-- If there are unstaged tracked changes (lines starting with ` M`, ` D`, etc.) or
-  untracked files (`??`), stage them all:
+**Tracked changes** (lines where the second character is `M`, `D`, or `R`) — list them and ask:
 
-  ```bash
-  git add -A
-  ```
+> "The following tracked changes were found — press Enter to stage all, or enter numbers to
+> exclude (comma-separated):
+>
+> 1. modified: path/to/file
+> 2. deleted:  path/to/other
+> …"
 
-- Then verify there is something staged:
+If the user presses Enter, run `git add -u`. Otherwise stage only the non-excluded files
+individually (`git add <file>`). Files the user excludes are left unstaged — do not warn or retry.
 
-  ```bash
-  git diff --cached --stat
-  ```
+**Untracked files** (`??` lines) — do NOT auto-stage. Pre-existing untracked files may have
+existed before the session and are unrelated to the current work. Instead, list them and ask:
 
-  If output is still empty: inform the user that there is nothing to commit and stop.
+> "The following untracked files were found — enter the numbers to include (comma-separated),
+> or press Enter to skip all:
+>
+> 1. path/to/file
+> 2. path/to/other
+> …"
+
+Stage only the confirmed ones individually (`git add <file>`).
+
+Then verify there is something staged:
+
+```bash
+git diff --cached --stat
+```
+
+If output is still empty: inform the user that there is nothing to commit and stop.
 
 ## Step 2 — Read the diff and recent history
 
@@ -40,7 +59,7 @@ git log --oneline -5       # recent commits for style/scope context
 
 Use this template:
 
-```
+```text
 <type>[(<scope>)]: <description>
 
 [body]
@@ -82,6 +101,7 @@ Include when the *why* is not obvious from the description. Omit otherwise — d
 ### Footer
 
 Only include footers that apply:
+
 - `BREAKING CHANGE: <explanation>` — incompatible API/behavior change
 - `Refs: #<number>` — if an issue number is visible in the diff (e.g., in comments or branch name)
 - `Co-authored-by: Name <email>` — if relevant
@@ -96,9 +116,21 @@ git commit -m "<message>"   # use -m for single-line; use heredoc for multi-line
 
 **Otherwise** (default — including all user-triggered invocations):
 
-Show the proposed message in a code block, then ask:
+Run `git diff --cached --name-status` and show the file list together with the proposed message,
+then ask for confirmation. Format:
 
-> Commit this? `[y]` yes / `[n]` cancel / `[e]` edit
+```text
+Files to be committed:
+  M  path/to/file1
+  D  path/to/file2
+
+---
+<proposed commit message>
+```
+
+Commit this? `[y]` yes / `[n]` cancel / `[e]` edit
+
+The file list is shown to the user for review but is **not** included in the `git commit -m` message.
 
 - `y` → run `git commit` with the message as shown
 - `n` → abort; inform the user nothing was committed

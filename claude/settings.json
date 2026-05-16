@@ -32,6 +32,15 @@
             "command": "rtk hook claude"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/icm hook pre"
+          }
+        ],
+        "matcher": "Bash"
       }
     ],
     "PostToolUse": [
@@ -40,13 +49,61 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path' | { read -r f; if [[ \"$f\" == *.md ]]; then output=$(markdownlint \"$f\" 2>&1); rc=$?; if [ $rc -ne 0 ]; then jq -n --arg f \"$f\" --arg o \"$output\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":(\"markdownlint issues in \"+$f+\":\\n\"+$o)}}'; fi; fi; } 2>/dev/null || true",
+            "command": "jq -r '.tool_input.file_path' | { read -r f; if [[ \"$f\" == *.md ]]; then root=$(git -C \"$(dirname \"$f\")\" rev-parse --show-toplevel 2>/dev/null || dirname \"$f\"); output=$(cd \"$root\" && markdownlint \"$f\" 2>&1); rc=$?; if [ $rc -ne 0 ]; then jq -n --arg f \"$f\" --arg o \"$output\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":(\"markdownlint issues in \"+$f+\":\\n\"+$o)}}'; fi; fi; } 2>/dev/null || true",
             "statusMessage": "Running markdownlint..."
           },
           {
             "type": "command",
             "command": "jq -r '.tool_input.file_path' | { read -r f; if [[ \"$f\" == *.sh ]]; then out=\"\"; if ! o=$(bash -n \"$f\" 2>&1); then out+=\"[bash -n]\\n${o}\\n\"; fi; if ! o=$(shellcheck \"$f\" 2>&1); then out+=\"[shellcheck]\\n${o}\\n\"; fi; if ! o=$(shfmt -d \"$f\" 2>&1); then out+=\"[shfmt]\\n${o}\\n\"; fi; if [[ -n \"$out\" ]]; then jq -n --arg f \"$f\" --arg o \"$out\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":(\"shell script issues in \"+$f+\":\\n\"+$o)}}'; fi; fi; } 2>/dev/null || true",
             "statusMessage": "Running shellcheck + shfmt..."
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/icm hook post"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/icm hook compact"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/icm hook prompt"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/icm hook start"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/icm hook end"
           }
         ]
       }
