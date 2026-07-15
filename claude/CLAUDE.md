@@ -71,10 +71,30 @@ tool-agnostic — reference Dynatrace where relevant but don't default to it.
 
 ## Tool Usage
 
-When possible, prefer local tools available in the current environment (CLI
-tools, binaries, scripts) over external alternatives. When a required tool
-is not available, say so, explain why it's needed, and suggest an
-alternative if one exists.
+- Prefer local tools (CLI, binaries, scripts) over external alternatives. If a
+  required tool is unavailable, say so, explain why it's needed, and suggest an
+  alternative if one exists.
+
+**Delegating to subagents:**
+
+- Use `isolation: "worktree"` for multi-file code changes.
+- Handle commits and PRs in the main conversation via the `/git-commit` and
+  `/pull-request-summary` skills — never delegate these steps to the subagent.
+- Always invoke those skills even when the commit message / PR body is already
+  drafted; never bypass with direct `git commit` or `gh pr create`.
+
+**Delegation policy, model / effort per Agent call:**
+
+- The full delegation rubric (when to delegate vs. inline, how to batch
+  parallel work, and the model/effort decision matrix) lives in
+  `~/.claude/rules/delegation.md` (user-level, not
+  project-relative) — always loaded, single source of truth. Follow it.
+- On every Agent call (except `subagent_type: "fork"`, which inherits the
+  parent model and context), explicitly set `model` — and reasoning/thinking
+  effort where the agent type exposes it — per that matrix. Never leave it
+  unset to silently default to the orchestrator's own.
+- Don't override a model already pinned in the target agent's frontmatter unless
+  the task clearly warrants it — note why if you do.
 
 ## Learning & Growth
 

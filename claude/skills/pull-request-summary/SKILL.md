@@ -1,9 +1,8 @@
 ---
 name: pull-request-summary
 description: Generate a reviewer-facing PR description from the current branch diff
-disable-model-invocation: true
 allowed-tools: Bash(git *), Bash(gh *), Bash(bbctl *), Read, Grep, Glob
-argument-hint: "[base-branch] [--skip-sandbox]"
+argument-hint: "[base-branch] [--skip-sandbox] [ticket-number]"
 ---
 
 ## Step 1 — Pre-flight
@@ -29,7 +28,9 @@ Store as CURRENT_BRANCH.
 ## Step 2 — Resolve base branch
 
 Parse $ARGUMENTS:
-- The first token that does not start with `--` is the base branch override.
+
+- If a token matches a ticket/reference identifier passed in the prompt (for example `PROJ-123`, `DT-456`, or another uppercase project key followed by `-` and digits), store it as PROMPT_TICKET.
+- The first token that does not start with `--` and is not PROMPT_TICKET is the base branch override.
 - If `--skip-sandbox` is present, store SKIP_SANDBOX=true; otherwise SKIP_SANDBOX=false.
 
 **If base branch provided via $ARGUMENTS:** validate it exists:
@@ -97,19 +98,23 @@ If commit messages are low-quality (contain only "wip", "fix", "update", "change
 **Title** — imperative mood, max 72 chars for the conventional commit part:
 
 ```
-<type>(<scope>): <verb> <object>
+<type>(<scope>): <verb> <object>[,ref: <PROMPT_TICKET>]
 
 # Examples:
 feat(auth): add OAuth2 PKCE flow for CLI clients
 fix(mesh-client): add exponential backoff retry to HTTP client
 refactor(storage): extract S3 client into reusable module
 chore(deps): bump controller-runtime to v0.17.2
+feat(auth): add OAuth2 PKCE flow,ref: PROJ-123
 ```
 
-If SKIP_SANDBOX=true, prepend `[SKIP_SANDBOX_CREATION] ` to the title:
+Only append `,ref: <PROMPT_TICKET>` when the ticket number was explicitly passed as part of the prompt. Do not add this suffix for references discovered from branch names or commit messages.
+
+If SKIP_SANDBOX=true, prepend `[SKIP_SANDBOX_CREATION]` to the title:
 
 ```
 [SKIP_SANDBOX_CREATION] feat(auth): add OAuth2 PKCE flow for CLI clients
+[SKIP_SANDBOX_CREATION] feat(auth): add OAuth2 PKCE flow,ref: PROJ-123
 ```
 
 **Body** — omit any section entirely if it has no content. Never write "N/A", "None", or leave placeholder text:
@@ -133,7 +138,19 @@ Only if present. Omit section entirely if none.
 
 ## Reviewer Focus
 Specific files/lines/decisions to highlight. Omit if nothing specific to call out.
+
+---
+Assisted-by: <AGENT>:<MODEL> [tool …]
 ```
+
+### AI attribution & accountability (Linux kernel guidance)
+
+Per the [kernel AI coding-assistants guidance](https://docs.kernel.org/process/coding-assistants.html), this PR description is AI-assisted, so:
+
+- End the body, after a `---` separator, with an attribution trailer:
+  `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL …]` (e.g. `Assisted-by: Claude Code:claude-opus-4-8`). List only specialized analysis tools actually used; omit basic tools (git, gcc, make, editors).
+- **Never add `Signed-off-by` on anyone's behalf.** Only a human can certify the Developer Certificate of Origin (DCO). The human opening the PR is the accountable submitter: they review the AI-generated changes, ensure license compliance, and take full responsibility. The AI is recorded with `Assisted-by:` — never `Co-authored-by:` or `Signed-off-by:`.
+- Do not fabricate which tools assisted; include the trailer only with the real agent/model that produced the change.
 
 ## Step 6 — Output and PR creation
 
@@ -150,12 +167,25 @@ git remote get-url origin 2>/dev/null
 - If yes, run:
 
 ```bash
-gh pr create \
+PR_URL=$(gh pr create \
   --title "<generated title>" \
   --body "$(cat <<'EOF'
 <generated body>
 EOF
-)"
+)")
+```
+
+`gh pr create` prints the PR URL to stdout on success; capture it as PR_URL.
+If PR_URL is empty after the command (unexpected), fall back to:
+
+```bash
+PR_URL=$(gh pr view --json url --jq .url 2>/dev/null)
+```
+
+After creation succeeds, always print:
+
+```
+✅ PR created: <PR_URL>
 ```
 
 - If `gh` is not installed or `gh auth status` fails: note it and skip.
@@ -176,14 +206,28 @@ BBCTL_REPO=$(echo "$REMOTE_URL" | sed 's|.*/||;s|\.git$||')
 - Then run:
 
 ```bash
-bbctl pr create \
+BBCTL_OUT=$(bbctl pr create \
   --title "<generated title>" \
   --body "<generated body>" \
   --project "$BBCTL_PROJECT" \
   --repo "$BBCTL_REPO" \
-  --target "$BASE_BRANCH"    # explicit target; don't rely on repo default
+  --target "$BASE_BRANCH")    # explicit target; don't rely on repo default
 ```
+
+After creation, extract the URL from bbctl output (look for `https://` line):
+
+```bash
+BB_PR_URL=$(echo "$BBCTL_OUT" | grep -o 'https://[^ ]*' | head -1)
+```
+
+If BB_PR_URL is non-empty, print:
+
+```
+✅ PR created: <BB_PR_URL>
+```
+
+If BB_PR_URL is empty: print "✅ PR created (URL not returned by bbctl)."
 
 - If `bbctl` is not installed: note it and skip.
 
-**If URL is neither or no remote exists:** print the description only.
+**If URL is neither or no remote exists:** print the description only. Do not fabricate a PR URL.

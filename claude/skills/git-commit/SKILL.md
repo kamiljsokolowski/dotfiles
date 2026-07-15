@@ -3,10 +3,18 @@ name: git-commit
 description: Create a Git commit for currently staged changes with an auto-generated conventional commit message. Use when the user asks to commit, save work, or create a checkpoint of staged changes.
 disable-model-invocation: false
 allowed-tools: Bash(git status) Bash(git diff *) Bash(git log *) Bash(git add *) Bash(git commit *)
-argument-hint: "[--yes]"
+argument-hint: "[--yes] [ticket-number]"
 ---
 
 # git-commit
+
+## Step 0 — Parse arguments
+
+Parse `$ARGUMENTS` before inspecting changes:
+
+- If a token matches a ticket/reference identifier passed in the prompt (for example `PROJ-123`, `DT-456`, or another uppercase project key followed by `-` and digits), store it as PROMPT_TICKET.
+- Ignore option tokens such as `--yes` for ticket detection.
+- Do not infer PROMPT_TICKET from the branch name or diff for the subject suffix; this suffix is only used when the ticket number was explicitly passed as part of the prompt.
 
 ## Step 1 — Collect all changes
 
@@ -93,6 +101,13 @@ Use the most affected module, package, or subdirectory. Omit if the change is ge
 - No period at end
 - No longer than 72 characters
 - Lowercase after the colon
+- If PROMPT_TICKET is set, append `,ref: <PROMPT_TICKET>` to the first line after the description. Keep the conventional commit description itself within 72 characters before the suffix.
+
+Example with an explicitly passed ticket:
+
+```text
+feat(auth): add OAuth2 PKCE flow,ref: PROJ-123
+```
 
 ### Body
 
@@ -104,7 +119,26 @@ Only include footers that apply:
 
 - `BREAKING CHANGE: <explanation>` — incompatible API/behavior change
 - `Refs: #<number>` — if an issue number is visible in the diff (e.g., in comments or branch name)
-- `Co-authored-by: Name <email>` — if relevant
+- `Co-authored-by: Name <email>` — for **human** co-authors only (never the AI tool)
+- `Assisted-by: <AGENT>:<MODEL> [tool …]` — AI attribution (see below)
+
+### AI attribution & sign-off (Linux kernel guidance)
+
+Per the [kernel AI coding-assistants guidance](https://docs.kernel.org/process/coding-assistants.html):
+
+- This commit is AI-assisted, so add an attribution trailer:
+  `Assisted-by: AGENT_NAME:MODEL_VERSION [TOOL …]`
+  (e.g. `Assisted-by: Claude Code:claude-opus-4-8`). List only **specialized
+  analysis tools** actually used (e.g. `coccinelle`, `sparse`, `smatch`,
+  `clang-tidy`); omit basic tools (git, gcc, make, editors).
+- The AI tool is recorded with `Assisted-by:` — **never** `Co-authored-by:`
+  (that is for human co-authors) and **never** `Signed-off-by:`.
+- **Do not add `Signed-off-by` on anyone's behalf.** Only a human can certify
+  the Developer Certificate of Origin (DCO). The human submitter is responsible
+  for reviewing the generated code, ensuring license compliance (respect the
+  project's license; add SPDX identifiers where the project requires them),
+  adding their own `Signed-off-by`, and taking full responsibility for the
+  contribution.
 
 ## Step 4 — Commit
 

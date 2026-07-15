@@ -1,27 +1,5 @@
 {
   "model": "opusplan",
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh"
-  },
-  "spinnerVerbs": {
-    "mode": "replace",
-    "verbs": [
-      "🧠 Jacking into the Net...",
-      "👁️ Booting Optical Camo...",
-      "🤖 Syncing with Motoko...",
-      "💊 Popping Sandevistan...",
-      "🔌 Flatline Detected, Reconnecting...",
-      "🏙️ Diving into Nightcity...",
-      "⚡ Overclocking the Cyborg Brain...",
-      "📡 Intercepting Ghost Signal...",
-      "🩸 電脳接続中...",
-      "🌐 バベルの塔を解析中...",
-      "🔫 義体をキャリブレーション中...",
-      "💀 ニルヴァーシュ、起動...",
-      "🕶️ Tracing the Laughing Man..."
-    ]
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -30,17 +8,34 @@
           {
             "type": "command",
             "command": "rtk hook claude"
+          },
+          {
+            "type": "command",
+            "command": "python3 \"/Users/kamil.sokolowski/.dotfiles/claude/hooks/convention-enforcer.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"/Users/kamil.sokolowski/.dotfiles/claude/hooks/acli-pii-enforcer.py\""
           }
         ]
       },
       {
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
             "command": "/opt/homebrew/bin/icm hook pre"
           }
-        ],
-        "matcher": "Bash"
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/require-model.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -86,6 +81,22 @@
             "command": "/opt/homebrew/bin/icm hook prompt"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"/Users/kamil.sokolowski/.dotfiles/claude/hooks/convention-loader.py\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/delegation-nudge.py"
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -108,5 +119,32 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "slack@claude-plugins-official": true
+  },
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "🧠 Jacking into the Net...",
+      "👁️ Booting Optical Camo...",
+      "🤖 Syncing with Motoko...",
+      "💊 Popping Sandevistan...",
+      "🔌 Flatline Detected, Reconnecting...",
+      "🏙️ Diving into Nightcity...",
+      "⚡ Overclocking the Cyborg Brain...",
+      "📡 Intercepting Ghost Signal...",
+      "🩸 電脳接続中...",
+      "🌐 バベルの塔を解析中...",
+      "🔫 義体をキャリブレーション中...",
+      "💀 ニルヴァーシュ、起動...",
+      "🕶️ Tracing the Laughing Man..."
+    ]
+  },
+  "tui": "fullscreen",
+  "skipAutoPermissionPrompt": true
 }
