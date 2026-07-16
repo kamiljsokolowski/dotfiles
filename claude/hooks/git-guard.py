@@ -7,7 +7,11 @@ Personal, user-level safety net enforcing:
      HEAD is on a protected branch (main/master).
   2. Never create a feature branch (git switch -c / checkout -b / branch
      <new>) in the PRIMARY worktree — steer to `git worktree add` instead.
-  3. Each repo is evaluated independently, against its own live state, read
+  3. Every newly created branch (via switch/checkout/branch/worktree add)
+     must follow the conventionalbranch.org naming shape
+     <type>/<kebab-description>, with a permissive type superset (see
+     BRANCH_TYPES) and uppercase tolerated for ticket IDs.
+  4. Each repo is evaluated independently, against its own live state, read
      at execution time via `git rev-parse` (not string pattern-matching).
 
 This is a hard-deny gate: every violation blocks. The only bypass is the
@@ -35,6 +39,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shlex
 import subprocess
 import sys
@@ -50,6 +55,44 @@ BRANCH_NON_CREATE_FLAGS = {
 }
 
 READONLY_TOKENS = {"--help", "-h", "--version"}
+
+# ---------------------------------------------------------------------------
+# Branch naming convention (conventionalbranch.org), permissive superset.
+# ---------------------------------------------------------------------------
+
+# Superset of the strict spec (feature/bugfix/hotfix/release/chore): also
+# accepts `fix` (used by ico-ai-tooling's GitHub convention) and `docs`.
+BRANCH_TYPES = {"feature", "bugfix", "hotfix", "release", "chore", "fix", "docs"}
+
+# Base/long-lived branches are exempt from naming (they're never "created"
+# in the sense this convention governs).
+BRANCH_NAME_EXEMPT = {"main", "master", "develop"}
+
+# Shape: <type>/<segment>(-<segment>)* ; segments are alnum (+ '.' for
+# release versions like 1.2.3); uppercase allowed to accommodate ticket IDs
+# (e.g. feature/CLIN-12345-desc) — a deliberate deviation from the strict
+# spec's all-lowercase rule. No leading/trailing/consecutive hyphens.
+_BRANCH_NAME_RE = re.compile(
+    r"^(?:" + "|".join(sorted(BRANCH_TYPES)) + r")/"
+    r"[A-Za-z0-9](?:[A-Za-z0-9.]|-(?=[A-Za-z0-9.]))*$"
+)
+
+
+def is_valid_branch_name(name: str) -> bool:
+    if name in BRANCH_NAME_EXEMPT:
+        return True
+    return bool(_BRANCH_NAME_RE.match(name))
+
+
+def naming_reason(name: str) -> str:
+    types = ", ".join(sorted(BRANCH_TYPES))
+    return (
+        f"Blocked: branch name '{name}' doesn't follow the conventional "
+        f"branch format <type>/<kebab-description> (types: {types}). "
+        f"Example: feature/CLIN-12345-add-widget. "
+        f"See ~/.claude/rules/git-worktree-harness.md. "
+        f"Bypass: GIT_GUARD_OFF=1."
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -136,7 +179,6 @@ def split_subcommands(command: str) -> list[str]:
 
 
 def strip_rtk_prefix(command: str) -> str:
-    import re
     command = re.sub(r"(?<![\w-])rtk\s+proxy\s+", "", command)
     command = re.sub(r"(?<![\w-])rtk\s+", "", command)
     return command
@@ -176,6 +218,27 @@ def parse_branch_create(args: list[str]) -> tuple[bool, str | None]:
     if not positional:
         return False, None
     return True, positional[0]
+
+
+def parse_worktree(args: list[str]) -> tuple[bool, str | None]:
+    """args excludes the leading 'worktree' token.
+
+    Only `worktree add ... -b/-B <name>` creates a new branch; `add` of an
+    existing branch (no -b/-B) or any other worktree subcommand (list,
+    remove, prune, ...) does not.
+    """
+    if not args or args[0] != "add":
+        return False, None
+    rest = args[1:]
+    i = 0
+    while i < len(rest):
+        a = rest[i]
+        if a in ("-b", "-B"):
+            if i + 1 < len(rest):
+                return True, rest[i + 1]
+            return False, None
+        i += 1
+    return False, None
 
 
 def parse_push_target(args: list[str], current_branch: str | None) -> tuple[bool, str | None]:
@@ -310,6 +373,8 @@ def main() -> None:
                     f"linked worktree: git worktree add ../<name> -b <branch>. "
                     f"Bypass: GIT_GUARD_OFF=1."
                 )
+            if create and target and not is_valid_branch_name(target):
+                deny(naming_reason(target))
             if target and not overridden:
                 state["sim_branch"] = target
 
@@ -322,6 +387,15 @@ def main() -> None:
                     f"linked worktree: git worktree add ../<name> -b <branch>. "
                     f"Bypass: GIT_GUARD_OFF=1."
                 )
+            if create and target and not is_valid_branch_name(target):
+                deny(naming_reason(target))
+
+        elif op == "worktree":
+            creates, target = parse_worktree(args)
+            # Sanctioned path — no primary-worktree location check here,
+            # only naming.
+            if creates and target and not is_valid_branch_name(target):
+                deny(naming_reason(target))
 
     sys.exit(0)
 
