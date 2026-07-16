@@ -75,6 +75,15 @@ tool-agnostic — reference Dynatrace where relevant but don't default to it.
   required tool is unavailable, say so, explain why it's needed, and suggest an
   alternative if one exists.
 
+**Git worktree & protected-branch harness:**
+
+- Full rules live in `~/.claude/rules/git-worktree-harness.md` (user-level,
+  not project-relative) — always create feature branches via
+  `git worktree add`, never commit/merge/reset --hard/force-push on
+  `main`/`master`, and treat each repo as an independent protected scope.
+  Follow it proactively — `~/.claude/hooks/git-guard.py` is the hard-deny
+  backstop, not the primary steer.
+
 **Delegating to subagents:**
 
 - Use `isolation: "worktree"` for multi-file code changes.
