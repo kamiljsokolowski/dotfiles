@@ -80,7 +80,8 @@ tool-agnostic — reference Dynatrace where relevant but don't default to it.
 - Full rules live in `~/.claude/rules/git-worktree-harness.md` (user-level,
   not project-relative) — always create feature branches via
   `git worktree add`, never commit/merge/reset --hard/force-push on
-  `main`/`master`, and treat each repo as an independent protected scope.
+  `main`/`master`, treat each repo as an independent protected scope, and
+  name branches per conventionalbranch.org (`<type>/<kebab-description>`).
   Follow it proactively — `~/.claude/hooks/git-guard.py` is the hard-deny
   backstop, not the primary steer.
 

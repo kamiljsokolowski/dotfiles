@@ -12,6 +12,8 @@ so the hook never has to fire.
    feature/fix branch, run `git worktree add ../<name> -b <branch>` from the
    primary clone rather than `git switch -c` / `git checkout -b` in place.
    Branch creation attempted directly in the primary clone is hard-blocked.
+   The branch name you pass to `-b` must follow the naming convention below
+   — see **Branch Naming**.
 
 2. **Never commit directly to `main`/`master`.** No `git commit`
    (including `--amend`), no local `git merge` into a protected branch, no
@@ -33,6 +35,25 @@ so the hook never has to fire.
    surface to the user that you did so and why. Never reach for it to route
    around a block without explaining first — a block from this hook usually
    means the request or approach needs reconsidering, not silencing.
+
+## Branch Naming
+
+Branch names follow [conventionalbranch.org](https://conventionalbranch.org/):
+`<type>/<kebab-description>`, e.g. `feature/add-ingest-retry`.
+
+- **Allowed types (permissive superset):** `feature`, `bugfix`, `hotfix`,
+  `release`, `chore`, `fix`, `docs`. This is a superset of the strict spec —
+  `fix` and `docs` are included so it doesn't collide with per-project
+  conventions (e.g. `ico-ai-tooling`'s GitHub repos use `fix/`).
+- Uppercase is tolerated in the description segment to accommodate ticket
+  IDs — e.g. `feature/CLIN-12345-add-widget` — a deliberate deviation from
+  the strict spec's all-lowercase rule.
+- A project's own rules may impose a **stricter** form on top (e.g. CLIN's
+  `feature/CLIN-XXXXX-descriptive-name` requirement) — the global check here
+  only enforces shape and type, not project-specific content.
+- Enforced by `git-guard.py` on every branch-creating command (`worktree add
+  -b`, `switch -c`, `checkout -b`, `branch <new>`) — hard-deny, same as the
+  rest of this harness. This is the steer so the hook rarely has to fire.
 
 ## Why this exists
 
