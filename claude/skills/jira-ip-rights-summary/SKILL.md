@@ -13,14 +13,10 @@ argument-hint: "<TICKET-KEY>"
 
 ## Step 0 — Parse arguments
 
-Extract the ticket key from `$ARGUMENTS`. If empty or missing, print:
-
+Extract ticket key from `$ARGUMENTS`. If empty, print usage and stop:
 ```text
 Usage: /jira-ip-rights-summary <TICKET-KEY>
-Example: /jira-ip-rights-summary CLIN-12345
 ```
-
-Then stop.
 
 ## Step 1 — Fetch ticket
 
@@ -32,130 +28,62 @@ acli-pii jira workitem view <KEY> --json 2>/dev/null | jq '{
 }'
 ```
 
-If the command fails or returns empty output: report the error and stop.
-Do not retry silently.
+Fail and stop on error or empty output.
 
 ## Step 2 — Extract content
 
-From the JSON:
+Extract from JSON:
+- KEY: `.key`
+- SUMMARY: `.fields.summary` (plain string)
+- DESCRIPTION: `.fields.description` (ADF JSON)
 
-- **KEY** — `.key` (top-level field)
-- **SUMMARY** — `.fields.summary` (plain string)
-- **DESCRIPTION** — `.fields.description` (ADF JSON)
-
-**ADF extraction rules:**
-
-- Traverse `content` arrays recursively; collect text from `text` nodes
-- Treat `heading` node text as section names ("How", "What", "Implementation")
-- `paragraph` and `listItem` content = bullet point candidates
-- Ignore `mention`, `emoji`, `inlineCard`, and `media` nodes
+**ADF parsing**: Recursively traverse `content` arrays. Collect text from `text` nodes. Use `heading` nodes to identify sections ("How", "What", "Implementation"). Extract `paragraph` and `listItem` content for bullets. Skip `mention`, `emoji`, `inlineCard`, `media` nodes.
 
 ## Step 3 — Build output
 
-### Ticket link
-
-```text
+**Output format:**
+```
 JIRA: [<KEY>](https://dt-rnd.atlassian.net/browse/<KEY>)
+<English title> / <Polish title>
+- <English bullet> / <Polish bullet>
 ```
 
-### Title line
-
-Derive a bilingual title from SUMMARY:
-
-- Format: `<English> / <Polish>`
-- Max 60 characters total including the ` / ` separator
+**Title rules:**
+- Max 60 chars total (including ` / `)
 - English: title case; Polish: sentence case
-- Keep technical terms, product names, and acronyms in English in both versions
-- If translation pushes past 60 chars: condense without mid-word truncation
+- Keep acronyms, config terms, product names in English (HPA, ES_JAVA_OPTS, release-info, istio, nginx)
+- Translate only clear domain concepts (gateway→brama, label→etykieta, threshold→próg)
 
-### Bullet points
-
-Extract key accomplishments from DESCRIPTION:
-
-1. Prefer content under a heading matching `How` or `Implementation`
-   (case-insensitive)
-2. Fall back to content under a `What` heading
-3. Fall back to full description body
-4. Produce 1–5 bullets — only as many as meaningful content supports
-5. If more than 5 exist: select the 5 most technically significant
-
-Format each bullet as:
-
-```text
-- <English past tense> / <Polish past tense>
-```
-
-- English verbs: Implemented, Added, Refactored, Configured, Wrote,
-  Extracted, Optimised
-- Polish verbs: Zaimplementowano, Dodano, Zrefaktoryzowano,
-  Skonfigurowano, Napisano, Wydzielono, Zoptymalizowano
-- Technical terms, product names, acronyms: keep in English in both columns
-- English and Polish must describe the same action — not independent summaries
+**Bullets:**
+- Extract from "How"/"Implementation" section first, then "What", then full description
+- Use past tense: Implemented, Added, Refactored, Configured, Wrote, Extracted, Optimised (English) / Zaimplementowano, Dodano, Zrefaktoryzowano, Skonfigurowano, Napisano, Wydzielono, Zoptymalizowano (Polish)
+- Keep technical terms in English (config identifiers, acronyms, jargon: emit/fallback, dual-emit, locale provider, release-info)
+- Translate only domain concepts with standard Polish words
+- 1–5 bullets; pick 5 most significant if more exist
+- English and Polish must match exactly in meaning
 
 **Edge cases:**
+- Empty description: `- No description provided / Brak opisu`
+- No "How"/"What" heading: Use full body
+- >5 logical points: Pick 5 most significant
+- Title >60 chars: Condense without mid-word break
+- Non-English content: Translate to English, then Polish
 
-| Scenario | Behaviour |
-| --- | --- |
-| Empty description | `- No description provided / Brak opisu` |
-| No "How"/"What"/"Implementation" heading | Summarise full body |
-| More than 5 logical points | Select 5 most technically significant |
-| Title exceeds 60 chars after translation | Condense; no mid-word cut |
-| Non-English ticket content | Translate to English first, then Polish |
+## Step 4 — Review and fix
 
-## Step 4 — Grammar and alignment review
+**English**: Title case (major words only; keep articles/small prepositions lowercase). All verbs past tense. Participial phrases need comma: `Added X, triggering Y` not `Added X triggering Y`.
 
-Before printing, review the draft for the issues below. Fix inline.
+**Polish**: Third-person impersonal past only (Zaimplementowano, Dodano). No `-ąc` gerunds. Use `w celu + bezokolicznik` for intent. Match English technical specifics exactly (JSON input → wejścia JSON, not vague equivalents). Preserve technical terms in English.
 
-### English
-
-- **Title case**: all major words capitalised in the English title;
-  prepositions ≤4 chars, articles, and conjunctions stay lowercase
-- **Past tense**: all verbs must be past tense — fix any present-tense
-  or infinitive slip
-- **Participial comma**: insert a comma before a participial phrase
-  modifying the whole clause:
-  `Added X to script, triggering Y` — not `Added X to script triggering Y`
-
-### Polish
-
-- **Impersonal past forms only**: use third-person impersonal past
-  (Zaimplementowano, Dodano) — never `-ąc` gerunds in purpose clauses
-  (e.g. "umożliwiając", "wywołując")
-- **Purpose clauses**: use `w celu + bezokolicznik` ("w celu poprawnego
-  przekazania") not `-ąc` gerunds when expressing intent
-- **Technical precision**: do not paraphrase technical specifics from
-  the English — if English says "JSON input", Polish must say
-  "wejścia JSON", not a vague equivalent like "wywołania"
-
-### Bilingual alignment
-
-- Each Polish bullet must convey exactly the same meaning as its English
-  counterpart — no additions, no omissions of substantive content
-- If English carries a scope qualifier ("end-to-end", "per-stack",
-  "nuke option"), Polish must carry an equivalent — do not drop or
-  substitute silently
-- Technical terms, tool names, and acronyms appear unchanged in both
-  columns
-
-Apply all fixes to the draft, then proceed to Step 5.
+**Bilingual match**: Polish must mean exactly what English means. Same scope qualifiers. Same technical terms. No additions or omissions.
 
 ## Step 5 — Output
 
-Print **only** the formatted result. No preamble, no explanation, no metadata.
+Print only the formatted result. No preamble, explanations, or metadata.
 
-```text
+```
 JIRA: [<KEY>](https://dt-rnd.atlassian.net/browse/<KEY>)
 <English title> / <Polish title>
-- <English> / <Polish>
-- <English> / <Polish>
-```
-
-### Example
-
-```text
-JIRA: [PROJ-123](https://dt-rnd.atlassian.net/browse/PROJ-123)
-Rate limiting implementation / Implementacja limitowania
-- Added Bucket4j integration / Dodano integrację Bucket4j
-- Configured per-user rate limits / Skonfigurowano limity na użytkownika
-- Added 429 handler with Retry-After / Dodano obsługę 429 z Retry-After
+- <English bullet> / <Polish bullet>
+- <English bullet> / <Polish bullet>
 ```
