@@ -1,10 +1,11 @@
 font-size = 12
-font-family = "FiraCode Nerd Font"
-adjust-cell-height = -15%
-adjust-cell-width = -10%
-window-padding-x = 10
-window-padding-y = 5
-theme = Catppuccin Mocha
+font-family = "Hack Nerd Font Mono"
+#adjust-cell-height = -15%
+#adjust-cell-width = -10%
+#window-padding-x = 10
+#window-padding-y = 5
+#theme = Catppuccin Mocha
+theme = TokyoNight
 background-blur-radius = 20
 mouse-hide-while-typing = true
 macos-option-as-alt = true

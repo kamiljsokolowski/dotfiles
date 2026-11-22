@@ -1,119 +1,97 @@
-# Path to your oh-my-zsh installation.
-export ZSH=${HOME}/.oh-my-zsh
+# History
+HISTFILE="$XDG_STATE_HOME/zsh/history"
+HISTSIZE=100000
+SAVEHIST=100000
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-#ZSH_THEME="robbyrussell"
-ZSH_THEME="spaceship"
+setopt APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+# Behaviour
+setopt AUTOCD
+setopt NOBEEP
+setopt NUMERIC_GLOB_SORT  # sort file10 after file9, not after file1
 
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+# Completion
+## Load completion system
+autoload -Uz compinit
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+## Initialize completion with cached metadata file
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+## Enable interactive completion menu selection
+zstyle ':completion:*' menu select
 
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
+## Make completion case-insensitive. Example: "doc" can complete to "Documents"
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'  # lowercase input matches upper and lower
 
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
+# Smart directory navigation
+eval "$(zoxide init zsh)"
 
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+# Fuzzy finder
+if [[ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
+  source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+  source /opt/homebrew/opt/fzf/shell/completion.zsh
+fi
 
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+## strip-cwd-prefix removes the leading ./ from results
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --strip-cwd-prefix'
 
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+## Ctrl-T uses fd
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
+## UI
+export FZF_DEFAULT_OPTS='
+  --height=60%
+  --layout=reverse
+  --border=rounded
+  --prompt="  "
+  --pointer="  "
+  --preview-window=right:65%:wrap:border-left
+'
+export _FZF_PREVIEW_CMD='bat --color=always --style=plain,numbers --line-range=:500 {}'
+export FZF_CTRL_T_OPTS="--preview '$_FZF_PREVIEW_CMD'"
 
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
+## Ctrl+F: file picker excluding hidden files
+_fzf_file_no_hidden() {
+  local cmd result
+  cmd="${FZF_DEFAULT_COMMAND/--hidden /}"
+  result=$(eval "${cmd:-find . -type f}" | fzf --preview "$_FZF_PREVIEW_CMD") \
+    && LBUFFER+="$result"  # LBUFFER is the text left of the cursor
+  zle reset-prompt
+}
+zle -N _fzf_file_no_hidden
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# Aliases
+alias diff='diff --color=auto'
 
-# User configuration
-export DEFAULT_USER=`whoami`
+## grep -> ripgrep
+alias grep='rg --color=auto'
 
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-path+=("${HOME}/.local/bin")
-path+=('/usr/local/lib/node_modules')
-path+=('/opt/homebrew/bin')
-path+=('/opt/homebrew/sbin')
-path+=('/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/bin')
-# export MANPATH="/usr/local/man:$MANPATH"
-fpath=(~/.zsh/completion $fpath)
+## ls, tree -> eza
+alias ls='eza --icons auto --git'
+alias tree='eza --tree --icons auto'
 
-source $ZSH/oh-my-zsh.sh
-autoload -Uz compinit \
-    && compinit -i
+## Reuse ls completions for eza (avoids defining a separate completion function)
+compdef eza=ls
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+## cat -> bat
+#alias cat='bat'
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+## man -> bat
+export MANPAGER="bat -l man -p"
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+## vim -> nvim
+alias vim='nvim'
 
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# Prompt
+eval "$(starship init zsh)"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-# GPG config
-GPG_TTY=$(tty)
-export GPG_TTY
-
-# fix "Insecure completion-dependent directories detected" 
-ZSH_DISABLE_COMPFIX=true
-
-source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
-source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# Use GKE gcloud auth plugin
-export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-
-export SPACESHIP_CONFIG="$HOME/.config/spaceship/spaceship.zsh"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/kamil.sokolowski/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+# Plugins
+source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+#source "$(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"

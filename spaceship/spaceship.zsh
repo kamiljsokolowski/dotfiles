@@ -1,9 +1,0 @@
-# AWS
-SPACESHIP_AWS_SHOW="false"
-
-# Azure
-SPACESHIP_AZURE_SHOW="false"
-
-# GCP
-SPACESHIP_GCLOUD_SHOW="false"
-
