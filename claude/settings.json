@@ -1,5 +1,5 @@
 {
-  "model": "opusplan",
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": [
       {
@@ -150,6 +150,54 @@
       "🕶️ Tracing the Laughing Man..."
     ]
   },
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5": {
+      "effortLevel": "medium"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    },
+    "claude-haiku-4-5": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(aws s3 rm:*) — scoped to prod-namespace buckets given frequent aws CLI usage and prod k8s namespaces observed",
+      "Bash(kubectl delete:*) — scoped to prod-doaks-dt-server and prod-doaks-elasticsearch namespaces given frequent kubectl usage"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Dynatrace (dynatrace-infrastructure, dynatrace-oss orgs — inferred from sibling repo remotes; the current repo has no remotes configured)",
+      "**Cloud provider(s)**: AWS, GCP, Azure (seen via aws, gcloud, az CLI usage and config scans)",
+      "**Repository visibility**: assume private — not queryable here (no remotes configured for this repo) and no visibility check available",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: unknown — origin/HEAD unset, no remotes configured for this repo",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine or CI runner with open internet",
+      "**Source control**: The trusted repo and its remote(s) only — this repo currently has no remotes configured",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: dynatrace-repo-eu-dev (config-derived — not a confirmed upload destination; uploads of local data still require confirmation); dok-nonprod-cicd-stack (usage-corroborated via transcript-mined cloud bucket access)",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: registry.lab.dynatrace.org (seen in container image registry config scan)",
+      "**Sensitive data locations & audiences**: files matching `*secrets.groovy`, PII-handling code paths (acli-pii, pii_transport, piikey, credential/oauth files) found across worktrees and sibling repos — share only with audiences cleared at the named+specifics bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace/host/container with `prod`/`production` as a whole word or segment — includes k8s namespaces seen in usage: prod-doaks-dt-server, prod-doaks-elasticsearch; and bucket dok-dtp-gitops-argo-prod-vault-snapshots (config-derived — not a confirmed upload destination; uploads of local data still require confirmation)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: cloud/DevOps engineering — Kubernetes, Terraform, Docker, Helm, ArgoCD/Flux, observability (Dynatrace) work",
+      "**Trusted repo**: The git repository the agent started in (/Users/kamil.sokolowski/Code) — currently has no tracked files and no configured remotes",
+      "**Org-specific CLIs**: acli-pii, dtctl, bbctl, icm, rtk, junoctl (seen in this project's transcript usage)"
+    ]
+  }
 }
